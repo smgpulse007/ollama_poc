@@ -30,7 +30,12 @@ This project demonstrates a Proof of Concept (PoC) for intelligent PDF data extr
    - Runs the Gemma model locally in a Docker container
    - Provides efficient inference capabilities
    - Ensures data privacy by keeping processing local
-   - Docker setup simulates RHEL 9 environment
+   - Docker setup simulates RHEL 9 environment:
+     - Uses a RHEL 9-based container image for compatibility
+     - Ensures consistent behavior across different host operating systems
+     - Provides enterprise-grade stability and security features
+     - Simulates production-like environment for testing and development
+     - Enables easy deployment to RHEL-based production servers
 
 4. **Streamlit**
    - Creates an intuitive web interface
@@ -112,6 +117,12 @@ Extract all dates in MM/DD/YYYY format, company names, and monetary values
    - Runs in a Docker container for isolation
    - Provides local inference capabilities
    - Ensures data privacy and security
+   - Container Environment:
+     - Based on RHEL 9 for enterprise-grade stability
+     - Includes all necessary system libraries and dependencies
+     - Configured with optimal settings for LLM inference
+     - Persists model data in Docker volumes
+     - Exposes API on port 11434 for local access
 
 ## 🛠️ Development
 
@@ -132,6 +143,9 @@ python monitor_resources.py
 - No data is sent to external services
 - Docker container provides isolation
 - Temporary files are properly cleaned up
+- RHEL 9 base image provides enterprise-grade security features
+- Container runs with minimal privileges
+- Network access is restricted to localhost only
 
 ## 📝 License
 
