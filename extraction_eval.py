@@ -6,8 +6,8 @@ Uses only the Python standard library. Reports paths and counts, never values.
 from __future__ import annotations
 
 import argparse
+from decimal import Decimal, InvalidOperation
 import json
-import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -27,14 +27,14 @@ def _reject_constant(value):
 
 
 def parse_json(text: str) -> Any:
-    def finite_float(value):
-        parsed = float(value)
-        if not math.isfinite(parsed):
-            raise ValueError("non-finite numbers are not valid JSON")
-        return parsed
+    def exact_decimal(value):
+        try:
+            return Decimal(value)
+        except InvalidOperation as exc:
+            raise ValueError("invalid JSON number") from exc
 
     return json.loads(text, object_pairs_hook=_unique_object,
-                      parse_constant=_reject_constant, parse_float=finite_float)
+                      parse_constant=_reject_constant, parse_float=exact_decimal)
 
 
 def read_records(path: Path) -> dict[str, dict]:
@@ -71,8 +71,8 @@ def _leaves(value: Any, path: str = "") -> dict[str, Any]:
 
 
 def _equal(expected: Any, actual: Any) -> bool:
-    # JSON numbers may be represented as int or float; booleans are not numbers.
-    if type(expected) in (int, float) and type(actual) in (int, float):
+    # Preserve decimal precision from JSON; booleans are not numbers.
+    if type(expected) in (int, float, Decimal) and type(actual) in (int, float, Decimal):
         return expected == actual
     return type(expected) is type(actual) and expected == actual
 

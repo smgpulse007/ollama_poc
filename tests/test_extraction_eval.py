@@ -75,9 +75,23 @@ class EvaluationTests(unittest.TestCase):
                     read_records(path)
 
     def test_strict_json_rejects_duplicate_keys_and_infinity(self):
-        for text in ('{"a":1,"a":2}', '{"a":Infinity}', '{"a":NaN}', '{"a":1e999}'):
+        for text in ('{"a":1,"a":2}', '{"a":Infinity}', '{"a":NaN}'):
             with self.assertRaises(ValueError):
                 parse_json(text)
+
+    def test_distinct_large_json_numbers_do_not_round_to_a_match(self):
+        result = check(parse_json('{"amount":9007199254740992}'),
+                       parse_json('{"amount":9007199254740993.0}'))
+        self.assertFalse(result["summary"]["passed"])
+
+    def test_small_json_numbers_do_not_underflow_to_zero(self):
+        result = check(parse_json('{"amount":0}'), parse_json('{"amount":1e-999}'))
+        self.assertFalse(result["summary"]["passed"])
+
+    def test_equivalent_decimal_and_exponent_forms_match_exactly(self):
+        result = check(parse_json('{"amount":1e999,"tiny":1e-999,"value":18.00}'),
+                       parse_json('{"amount":10e998,"tiny":10e-1000,"value":18}'))
+        self.assertTrue(result["summary"]["passed"])
 
     def test_cli_fixtures_and_report(self):
         with tempfile.TemporaryDirectory() as directory:
