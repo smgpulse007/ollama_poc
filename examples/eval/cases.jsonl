@@ -1,0 +1,2 @@
+{"id":"invoice-a","source_text":"SYNTHETIC EXAMPLE. Cedar Demo Supplies invoice INV-DEMO-01, issued 2026-01-08. Total USD 42.50. Due date not provided.","expected":{"invoice_id":"INV-DEMO-01","issued":"2026-01-08","total":42.5,"due_date":null}}
+{"id":"invoice-b","source_text":"SYNTHETIC EXAMPLE. Pine Demo Studio invoice INV-DEMO-02, issued 2026-01-09. Total USD 18.00. Due 2026-02-09.","expected":{"invoice_id":"INV-DEMO-02","issued":"2026-01-09","total":18.0,"due_date":"2026-02-09"}}

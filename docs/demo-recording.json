@@ -1,0 +1,23 @@
+{
+  "recorded_utc": "2026-11-14T04:04:09.360049+00:00",
+  "kind": "animation_rendered_from_actual_command_output",
+  "source_sha256": {
+    "extraction_eval.py": "4da2fdeafb9d37bb5ba71893d499d61d320051212ae4655fbce3932adcd76a03",
+    "examples/eval/demo.py": "84426bca91bd58162c4aaa53a4c4adda49146c77be4353e108717dc971122cf6",
+    "examples/eval/cases.jsonl": "f837a3dbb446a3c6f8b606f0945397827368cf760ad5cdb891378c420aebd7ef",
+    "examples/eval/predictions-pass.jsonl": "82aeed41708cf9d3bf283024a4479168f11f30106b2d8208b2f3a05bd7fe541f",
+    "examples/eval/predictions-fail.jsonl": "dc7eb3c938674bd6d3aa2a0900ea6c2d6ebb3f66f7b3d635f1441dcab7793cad"
+  },
+  "commands": [
+    {
+      "command": "python examples/eval/demo.py",
+      "exit_code": 0,
+      "output": "Synthetic extraction regression demo -- no model is called.\n\nPASS fixture | exit 0\n  Cases passed: 2/2\n  Reference fields matched: 8/8\n  Unexpected fields: 0\n\nFAIL fixture | exit 1\n  Cases passed: 1/2\n  Reference fields matched: 7/8\n  Unexpected fields: 1\n  invoice-a: mismatched /due_date\n  invoice-a: unexpected /approved\n\nThe failing fixture is caught as intended. These are not model accuracy results.\n"
+    },
+    {
+      "command": "python -m unittest discover -s tests",
+      "exit_code": 0,
+      "output": "...................\n----------------------------------------------------------------------\nRan 19 tests in 0.231s\n\nOK\n"
+    }
+  ]
+}
