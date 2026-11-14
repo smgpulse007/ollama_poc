@@ -34,6 +34,10 @@ flowchart LR
 
 The included `extraction_eval.py` checks saved structured outputs against reference fields. It is useful when changing a document-extraction prompt or local model: detect missing fields, wrong values, invalid JSON, and invented extra fields before accepting a change.
 
+![Actual terminal demo: accept a matching synthetic fixture and catch a wrong date plus an invented field](docs/extraction-eval-demo.gif)
+
+Try the complete offline walkthrough with `python examples/eval/demo.py` after cloning. The animation displays actual CLI results from hand-written fixtures and the test suite; it does not demonstrate model accuracy or the separate PDF UI. [Recording details](docs/record-demo.md)
+
 ```bash
 git clone https://github.com/smgpulse007/ollama_poc.git
 cd ollama_poc
