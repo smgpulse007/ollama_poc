@@ -1,0 +1,2 @@
+{"id":"invoice-a","output":{"invoice_id":"INV-DEMO-01","issued":"2026-01-08","total":42.5,"due_date":"2026-02-08","approved":true}}
+{"id":"invoice-b","output":{"invoice_id":"INV-DEMO-02","issued":"2026-01-09","total":18,"due_date":"2026-02-09"}}

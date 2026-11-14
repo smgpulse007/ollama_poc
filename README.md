@@ -30,6 +30,43 @@ flowchart LR
 
 ## Quick Start
 
+### Offline extraction regression checks (no model or dependencies)
+
+The included `extraction_eval.py` checks saved structured outputs against reference fields. It is useful when changing a document-extraction prompt or local model: detect missing fields, wrong values, invalid JSON, and invented extra fields before accepting a change.
+
+```bash
+git clone https://github.com/smgpulse007/ollama_poc.git
+cd ollama_poc
+python extraction_eval.py --cases examples/eval/cases.jsonl --predictions examples/eval/predictions-pass.jsonl
+python -m unittest discover -s tests -v
+```
+
+Requires only Python 3.10+. The hand-written passing fixture has 2 cases and 8 matching fields, exiting 0. The following deliberately incorrect fixture exits 1, reports 7/8 matching fields, and flags an invented field:
+
+```bash
+python extraction_eval.py --cases examples/eval/cases.jsonl --predictions examples/eval/predictions-fail.jsonl --report evaluation.json
+```
+
+These fixtures demonstrate the evaluator; they are **not model outputs or evidence of extraction accuracy**.
+
+To check your own synthetic examples, create two JSONL files with unique string IDs:
+
+```json
+{"id":"demo-1","expected":{"invoice_id":"INV-DEMO-01","due_date":null}}
+```
+
+```json
+{"id":"demo-1","output":{"invoice_id":"INV-DEMO-01","due_date":null}}
+```
+
+`output` can also be a string containing a JSON object. Save one structured output per example from your extraction workflow. The Streamlit UI currently returns free-form chunk responses; this CLI does not run a model, merge those chunks, or infer a schema. Ask for JSON and review the reference values yourself before evaluating.
+
+The comparison uses exact scalar values, positional arrays, and JSON Pointer paths. Missing is distinct from `null`, strings are distinct from numbers, and boolean `true` is distinct from numeric `1`. Numerically equal JSON numbers such as `18` and `18.0` match. Empty containers count as reference leaves. Field accuracy is matched reference leaves divided by total reference leaves; extra fields are reported separately and still fail the case. No fuzzy date, currency, or semantic normalization is applied.
+
+Exit codes: **0** all cases match with no extra fields; **1** an output differs, is absent, or is invalid; **2** reference/input/report errors (including duplicate or unknown IDs). Reports contain case IDs, paths, statuses, and counts, not document text or field values. Use synthetic IDs and field names too if reports will be shared. The new CI workflow exercises only this offline path.
+
+### PDF extraction UI (Ollama required)
+
 ```bash
 git clone https://github.com/smgpulse007/ollama_poc.git
 cd ollama_poc
@@ -39,12 +76,14 @@ python -m venv venv
 pip install -r requirements.txt
 
 docker compose up -d
-docker exec -it ollama ollama pull gemma3:4b
+docker compose exec ollama ollama pull gemma3:4b
 
 streamlit run app.py
 ```
 
 Open `http://localhost:8501`, upload a synthetic/sample PDF, and enter extraction criteria.
+
+The checked-in Compose configuration requests an NVIDIA GPU. The UI defaults to `gemma3:4b`, matching the pull command. Its LangChain dependencies are unpinned, so this legacy UI path requires separate environment validation; passing the offline checks does not establish that the PDF/model stack runs.
 
 ## Sample Extraction Prompt
 
@@ -57,7 +96,7 @@ Extract all invoice dates, company names, payment terms, total amounts, and unre
 1. Streamlit accepts a local PDF upload.
 2. `pdf_processor.py` extracts text and splits it into chunks.
 3. LangChain assembles extraction prompts for the selected criteria.
-4. `ollama_client.py` calls a local Ollama model endpoint.
+4. `PDFProcessor` calls Ollama through LangChain; `ollama_client.py` is a separate client used by the prompt/memory smoke scripts.
 5. The app aggregates chunk-level responses for review.
 
 ## Validation

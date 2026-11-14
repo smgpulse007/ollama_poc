@@ -6,7 +6,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
 class PDFProcessor:
-    def __init__(self, model_name: str = "gemma3:27b"):
+    def __init__(self, model_name: str = "gemma3:4b"):
         self.llm = Ollama(model=model_name)
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
@@ -20,7 +20,6 @@ class PDFProcessor:
             text = ""
             for page in pdf.pages:
                 text += page.extract_text() or ""
-                print(text)
         return text
     
     def split_text(self, text: str) -> List[str]:
@@ -58,4 +57,4 @@ class PDFProcessor:
         return {
             "extracted_data": results,
             "criteria": criteria
-        } 
+        }
